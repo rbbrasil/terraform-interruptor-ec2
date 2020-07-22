@@ -5,3 +5,7 @@ output "ip_servidor_inutil" {
 output "hostname_servidor_inutil" {
   value = aws_instance.servidor_inutil.public_dns
 }
+
+output "endpoint_s3" {
+  value = aws_s3_bucket.bucket.website_endpoint
+}
