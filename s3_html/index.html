@@ -1,3 +1,210 @@
+<!doctype html>
 <html>
-	opa
+
+<head>
+    <title>Interruptor de EC2</title>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <style type="text/css">
+        pre {
+            max-height: 200px;
+            min-height: 39px;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12" style="margin-top:55px; margin-bottom: 35px;">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title">Interruptor de EC2</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="well">
+                            <form role="form" onsubmit="return false;">
+                                <div class="form-group">
+                                    <label for="url">URL</label>
+                                    <input id="url" type="url" class="form-control" placeholder="" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="method">Método</label>
+                                    <select id="method" class="form-control">
+                                        <option value="POST">POST</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="display: none;">
+                                    <label for="params">Parâmetros</label>
+                                    <textarea id="params" class="form-control"
+                                        placeholder='{"foo": "bar", "baz": 123.45}'></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="data">ID da instância EC2</label>
+									<input id="data" class="form-control" placeholder='{"id": "i-07d1391f53bd36b7e"} ou {"id": "i-07d1391f53bd36b7e, i-1xd4vh7jl9g3ddhv1"}'>
+                                </div>
+                                <div class="form-group">
+                                    <label for="headers">Chave de acesso</label>
+                                    <input id="headers" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <div class="form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="optradio"
+                                                value="on">Ligar
+                                        </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="optradio"
+                                                value="off">Desligar
+                                        </label>
+                                    </div>
+                                </div>
+                                <button id="submit" type="submit" class="btn btn-primary">Submeter</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="well">
+                            <h3>Request</h3>
+                            <pre id="request">No Data</pre>
+                        </div>
+                        <div class="well">
+                            <h3>Response</h3>
+                            <pre id="response">No Data</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/axios@0.19.0/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script>
+        (function () {
+
+            // Just for you IE8
+            if (typeof Array.prototype.indexOf === 'undefined') {
+                Array.prototype.indexOf = function (item) {
+                    for (var i = 0, l = this.length; i < l; i++) {
+                        if (this[i] === item) {
+                            return i;
+                        }
+                    }
+                    return -1;
+                }
+            }
+
+            var url = document.getElementById('url');
+            var action;
+            var method = document.getElementById('method');
+            var params = document.getElementById('params');
+            var data = document.getElementById('data');
+            var headers = document.getElementById('headers');
+            var submit = document.getElementById('submit');
+            var request = document.getElementById('request');
+            var response = document.getElementById('response');
+
+            $('input[type=radio][name=optradio]').on('change', function () {
+                if ($(this).val() === 'on') {
+                    action = 'on';
+                } else 
+                if ($(this).val() === 'off') {
+                    action = 'off';
+                }
+            });
+
+            function acceptsData(method) {
+                return ['PATCH', 'POST', 'PUT'].indexOf(method) > -1;
+            }
+            function getUrl() {
+                return url.value.length === 0 ? '/api' : url.value;
+            }
+            function getParams() {
+                return params.value.length === 0 ? null : JSON.parse(params.value);
+            }
+            function getData() {
+                return data.value.length === 0 ? null : JSON.parse(`{"id" : "${data.value}", "op":"${action}" }`);
+            }
+            function getHeaders() {
+                return headers.value.length === 0 ? null : JSON.parse(`{"x-api-key" : "${headers.value}"}`);
+            }
+            function syncWithLocalStorage() {
+                method.value = localStorage.getItem('method') || 'GET';
+                params.value = localStorage.getItem('params') || '';
+                data.value = localStorage.getItem('data') || '';
+                headers.value = localStorage.getItem('headers') || '';
+                url.value = localStorage.getItem('url') || '';
+            }
+            function syncParamsAndData() {
+                switch (method.value) {
+                    case 'PATCH':
+                    case 'POST':
+                    case 'PUT':
+                        params.parentNode.style.display = 'none';
+                        data.parentNode.style.display = '';
+                        break;
+                    default:
+                        params.parentNode.style.display = '';
+                        data.parentNode.style.display = 'none';
+                        break;
+                }
+            }
+
+            submit.onclick = function () {
+                var options = {
+                    url: getUrl(),
+                    params: !acceptsData(method.value) ? getParams() : undefined,
+                    data: acceptsData(method.value) ? getData() : undefined,
+                    method: method.value,
+                    headers: getHeaders()
+                };
+
+                request.innerHTML = JSON.stringify(options, null, 2);
+                console.log(options);
+
+                axios(options)
+                    .then(function (res) {
+                        response.innerHTML = JSON.stringify(res.data, null, 2);
+                    })
+                    .catch(function (res) {
+                        response.innerHTML = JSON.stringify(res.data, null, 2);
+                    });
+            };
+
+            url.onchange = function () {
+                localStorage.setItem('url', url.value);
+            };
+            method.onchange = function () {
+                localStorage.setItem('method', method.value);
+                syncParamsAndData();
+            };
+            params.onchange = function () {
+                localStorage.setItem('params', params.value);
+            };
+            data.onchange = function () {
+                localStorage.setItem('data', data.value);
+            };
+            headers.onchange = function () {
+                localStorage.setItem('headers', headers.value);
+            };
+
+            syncWithLocalStorage();
+            syncParamsAndData();
+
+        })();
+    </script>
+</body>
+
 </html>
