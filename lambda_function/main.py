@@ -22,7 +22,7 @@ def lambda_handler(event, context):
                 except ClientError as e:
                     print(e)
                     return(e.response['Error']['Message'])
-    elif operacao == "off":
+    else:
                 try:
                     ec2 = boto3.client('ec2', region_name=regiao)
                     response = ec2.stop_instances(InstanceIds=[instancias], DryRun=False)
