@@ -15,11 +15,11 @@ resource "aws_s3_bucket" "bucket" {
 }
 
 resource "aws_s3_bucket_object" "html" {
-  bucket       = aws_s3_bucket.bucket.id
-  key          = "index.html"
-  source       = "s3_html/index.html"
-  acl          = "public-read"
-  content_type = "text/html"
-  //  encoding     = "utf8"
+  bucket           = aws_s3_bucket.bucket.id
+  key              = "index.html"
+  source           = "s3_html/index.html"
+  acl              = "public-read"
+  content_type     = "text/html"
+  content_encoding = "utf-8"
 }
 

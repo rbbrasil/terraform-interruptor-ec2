@@ -3,14 +3,13 @@ resource "aws_api_gateway_method" "method_options" {
   resource_id   = aws_api_gateway_resource.resource.id
   http_method   = "OPTIONS"
   authorization = "NONE"
-  //api_key_required = true
 }
 
 resource "aws_api_gateway_method_response" "method_response_options" {
   rest_api_id     = aws_api_gateway_rest_api.api_gateway.id
   resource_id     = aws_api_gateway_resource.resource.id
   http_method     = aws_api_gateway_method.method_options.http_method
-  status_code     = 200
+  status_code     = "200"
   response_models = { "application/json" = "Empty" }
 
   response_parameters = {
@@ -27,6 +26,11 @@ resource "aws_api_gateway_integration" "options_integration" {
   resource_id = aws_api_gateway_resource.resource.id
   http_method = aws_api_gateway_method.method_options.http_method
   type        = "MOCK"
+  request_templates = {
+    "application/json" = <<PARAMS
+{ "statusCode": 200 }
+PARAMS
+  }
 
   depends_on = [aws_api_gateway_method.method_options]
 }
