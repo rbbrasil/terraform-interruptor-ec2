@@ -30,7 +30,7 @@ EOF
 
 resource "aws_iam_policy" "restart_ec2" {
   name        = "ReiniciarEC2"
-  description = "Politica para iniciar e para instancias EC2"
+  description = "Politica para iniciar e parar instancias EC2"
 
   policy = <<EOF
 {
