@@ -2,8 +2,9 @@ resource "aws_lambda_function" "lambda_function" {
   function_name = var.lambda_nome
   role          = aws_iam_role.lambda_iam.arn
   handler       = "main.lambda_handler"
-  filename      = "./lambda_function/lambda.zip"
-  runtime       = "python3.8"
+  filename      = "${path.module}/lambda_function/lambda.zip"
+  //filename      = "./lambda_function/lambda.zip"
+  runtime = "python3.8"
 
 }
 
