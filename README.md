@@ -25,6 +25,7 @@ module "interruptor" {
   api_caminho        = "nome-recurso-api"
   lambda_nome        = "nome-funcao-lambda"
 }
+```
 
 #### Output
 ```
