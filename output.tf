@@ -11,11 +11,11 @@ output "id_servidor_inutil" {
 }
 
 output "endpoint_s3" {
-  value = aws_s3_bucket.bucket.website_endpoint
+  value = "http://${aws_s3_bucket.bucket.website_endpoint}"
 }
 
 output "endpoint_api" {
-  value = aws_api_gateway_deployment.deployment.invoke_url
+  value = "${aws_api_gateway_deployment.deployment.invoke_url}${aws_api_gateway_resource.resource.path}"
 }
 
 output "api_key" {
