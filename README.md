@@ -8,7 +8,7 @@ Cria uma página HTML em um S3 que permite ligar ou desligar uma instância AWS 
 ## Como ele faz
 A operação de ligar ou desligar a instância é realizar a partir de uma chamada autenticada ao API Gateway através de uma página HTML estática hospedada em um S3. Ao submeter o formulário que contém o ID da instância EC2, o Endpoint do API Gateway e a chave de acesso, a requisição será encaminhada à uma função Lambda que ligará ou desligará a instância especificada.
 
-Serão criados *XX* recursos ao total (ver saída do comando `terraform plan`). Os principais recursos são:
+Serão criados 27 recursos ao total. Os principais recursos são:
 - Uma instância Linux EC2
 - Um API Gateway com CORS habilitado
 - Um bucket S3 público que hospedará uma página HTML estática
@@ -55,19 +55,19 @@ output "api_key" {
 ```
 
 ### Execução
-Crie um arquivo `main.tf` contendo o conteúdo descrito acima, parametrizado de acordo com seu ambiente local e execute os seguintes comandos:
+Crie um arquivo `main.tf` contendo o conteúdo descrito acima, parametrizado de acordo com seu ambiente local e execute os seguintes comandos após cumprir as dependências:
 ```
 $ terraform init
 $ terraform plan
 $ terraform apply
 ```
-(testado com Terraform v0.12.26)
+(testado com Terraform v0.13.02)
 
 #### Executando com o cURL
 Para fins de testes, pode ser substituído o HTML do bucket S3 pelo cURL e executar a seguinte chamada:
 ```sh
 $ curl -X POST [ENDPOINT_DO_API_GATEWAY] -d '{"id": "i-0f5a34460bc33b735", "op": "on"}' -H 'x-api-key: CHAVE_DA_API' -q
-```
+``
 
 ## Dependências
 ### Par de chaves SSH
