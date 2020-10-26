@@ -29,23 +29,26 @@
                         <div class="well">
                             <form role="form" onsubmit="return false;">
                                 <div class="form-group">
-                                    <label for="url">URL</label>
+                                    <label for="url">Endpoint API</label>
                                     <input id="url" type="url" class="form-control" placeholder="" />
                                 </div>
                                 <div class="form-group">
-                                    <label for="method">Método</label>
+                                    <label for="method">Metodo</label>
                                     <select id="method" class="form-control">
                                         <option value="POST">POST</option>
+                                        <option value="GET">GET</option>
                                     </select>
                                 </div>
-                                <div class="form-group" style="display: none;">
+								<!--                            
+								<div class="form-group" style="display: none;">
                                     <label for="params">Parâmetros</label>
                                     <textarea id="params" class="form-control"
-                                        placeholder='{"foo": "bar", "baz": 123.45}'></textarea>
+                                        placeholder='oo": "bar", "baz": 123.45}'></textarea>
                                 </div>
+								-->
                                 <div class="form-group">
-                                    <label for="data">ID da instância EC2</label>
-									<input id="data" class="form-control" placeholder='{"id": "i-07d1391f53bd36b7e"} ou {"id": "i-07d1391f53bd36b7e, i-1xd4vh7jl9g3ddhv1"}'>
+                                    <label for="data">ID da instancia EC2</label>
+									<input id="data" class="form-control" placeholder=''>
                                 </div>
                                 <div class="form-group">
                                     <label for="headers">Chave de acesso</label>
@@ -135,7 +138,7 @@
                 return params.value.length === 0 ? null : JSON.parse(params.value);
             }
             function getData() {
-                return data.value.length === 0 ? null : JSON.parse(`{"id" : "${data.value}", "op":"${action}" }`);
+                return data.value.length === 0 ? null : JSON.parse(`{"id":"${data.value}", "op":"${action}" }`);
             }
             function getHeaders() {
                 return headers.value.length === 0 ? null : JSON.parse(`{"x-api-key" : "${headers.value}"}`);
